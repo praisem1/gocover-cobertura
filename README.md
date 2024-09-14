@@ -18,15 +18,17 @@ Installation
 
 Just type the following to install the program and its dependencies:
 
-    $ go get github.com/boumenot/gocover-cobertura
+    $ go get github.com/praisem1/gocover-cobertura
 
 Usage
 -----
 
 `gocover-cobertura` reads from the standard input:
 
-    $ go test -coverprofile=coverage.txt -covermode count github.com/gorilla/mux
+    $ go test -coverprofile=coverage.txt 
     $ gocover-cobertura < coverage.txt > coverage.xml
+    or
+    $ gocover-cobertura -r coverage.txt -w coverage.xml
     
 Note that you should run this from the directory which holds your `go.mod` file.
 
