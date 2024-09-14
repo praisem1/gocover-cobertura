@@ -31,6 +31,8 @@ func main() {
 
 	flag.BoolVar(&byFiles, "by-files", false, "code coverage by file, not class")
 	flag.BoolVar(&ignore.GeneratedFiles, "ignore-gen-files", false, "ignore generated files")
+	inputFile := flag.String("r", "", "input coverage file")
+	outputFile := flag.String("w", "", "converted coverage output file")
 	ignoreDirsRe := flag.String("ignore-dirs", "", "ignore dirs matching this regexp")
 	ignoreFilesRe := flag.String("ignore-files", "", "ignore files matching this regexp")
 
@@ -51,7 +53,43 @@ func main() {
 		}
 	}
 
-	if err := convert(os.Stdin, os.Stdout, &ignore); err != nil {
+	// Read from stdin if input file is not specified, and output to stdout if output file is not specified.
+	var r io.Reader = os.Stdin
+	var w io.Writer = os.Stdout
+
+	if *inputFile != "" {
+		f, err := os.Open(*inputFile)
+		if err != nil {
+			fatal("Failed to open input file: %s", err)
+		}
+
+		defer func(f *os.File) {
+			err := f.Close()
+			if err != nil {
+				fatal("Failed to close input file: %s", err)
+			}
+		}(f)
+
+		r = f
+	}
+
+	if *outputFile != "" {
+		f, err := os.Create(*outputFile)
+		if err != nil {
+			fatal("Failed to open output file: %s", err)
+		}
+
+		defer func(f *os.File) {
+			err := f.Close()
+			if err != nil {
+				fatal("Failed to close output file: %s", err)
+			}
+		}(f)
+
+		w = f
+	}
+
+	if err := convert(r, w, &ignore); err != nil {
 		fatal("code coverage conversion failed: %s", err)
 	}
 }
