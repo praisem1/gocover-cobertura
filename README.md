@@ -18,7 +18,7 @@ Installation
 
 Just type the following to install the program and its dependencies:
 
-    $ go get github.com/praisem1/gocover-cobertura
+    $ go install github.com/praisem1/gocover-cobertura@latest
 
 Usage
 -----
